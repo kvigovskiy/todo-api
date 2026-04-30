@@ -1,5 +1,7 @@
 package com.example.todo;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
@@ -11,6 +13,7 @@ import org.springframework.http.ResponseEntity;
 @RestController
 @RequestMapping("/todos")
 public class TodoController {
+    private static final Logger log = LoggerFactory.getLogger(TodoController.class);
     private final TodoRepository todoRepository;
 
     public TodoController(TodoRepository todoRepository) {
@@ -31,6 +34,7 @@ public class TodoController {
     public ResponseEntity<Todo> createTodo(@RequestBody Todo todo) {
         // Валидация: title обязателен и не пустой
         if (todo.getTitle() == null || todo.getTitle().trim().isEmpty()) {
+            log.warn("Validation failed: title is null or empty for incoming Todo");
             return ResponseEntity.badRequest().build();
         }
         Todo savedTodo = todoRepository.save(todo);
@@ -42,6 +46,7 @@ public class TodoController {
         return todoRepository.findById(id).map(todo -> {
             // Валидация: title обязателен и не пустой
             if (todoDetails.getTitle() == null || todoDetails.getTitle().trim().isEmpty()) {
+                log.warn("Validation failed: title is null or empty for Todo with id {}", id);
                 return ResponseEntity.badRequest().build();
             }
             todo.setTitle(todoDetails.getTitle());
