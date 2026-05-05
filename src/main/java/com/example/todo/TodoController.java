@@ -5,9 +5,10 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.web.bind.annotation.*;
 
-import java.util.List;
 import java.util.Optional;
 
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 
@@ -22,8 +23,9 @@ public class TodoController {
     }
 
     @GetMapping
-    public List<Todo> getAllTodos() {
-        return todoRepository.findAll();
+    public Page<Todo> getAllTodos(Pageable pageable) {
+        log.info("Fetching todos page: {}, size: {}", pageable.getPageNumber(), pageable.getPageSize());
+        return todoRepository.findAll(pageable);
     }
 
     @GetMapping("/{id}")
